@@ -5,13 +5,28 @@ import { Provider } from "react-redux";
 import rootReducer from "./reducers";
 import App from "./components/App";
 import "./index.css";
-import "./pubsub";
+import PubSub from "./pubsub";
+import { newMessage } from "./actions/messages";
 
 const store = createStore(rootReducer);
 
 console.log("store.getState()", store.getState());
 store.subscribe(() => console.log("store.getState()", store.getState()));
 
+const pubsub = new PubSub();
+pubsub.addListener({
+  message: (messageObject) => {
+    const { message, channel } = messageObject;
+
+    console.log("recieved message::", message, "channel:", channel);
+
+    store.dispatch(message);
+  },
+});
+
+setTimeout(() => {
+  pubsub.publish(newMessage("hello there!!!"));
+}, 1000);
 ReactDOM.render(
   <Provider store={store}>
     <App />
