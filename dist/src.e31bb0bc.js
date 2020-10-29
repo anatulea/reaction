@@ -31756,9 +31756,11 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.MESSAGE_CHANNEL = void 0;
+exports.default = exports.PubSubContext = exports.MESSAGE_CHANNEL = void 0;
 
 var _pubnub = _interopRequireDefault(require("pubnub"));
+
+var _react = require("react");
 
 var _pubnub2 = _interopRequireDefault(require("./pubnub.config"));
 
@@ -31768,7 +31770,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var MESSAGE_CHANNEL = "MESSAGE_CHANNEL";
+var MESSAGE_CHANNEL = 'MESSAGE_CHANNEL';
 exports.MESSAGE_CHANNEL = MESSAGE_CHANNEL;
 
 var PubSub = function PubSub() {
@@ -31781,7 +31783,7 @@ var PubSub = function PubSub() {
   });
 
   _defineProperty(this, "publish", function (message) {
-    console.log('message in publish', message);
+    console.log('publish message', message);
 
     _this.pubnub.publish({
       message: message,
@@ -31795,6 +31797,8 @@ var PubSub = function PubSub() {
   });
 };
 
+var PubSubContext = (0, _react.createContext)();
+exports.PubSubContext = PubSubContext;
 var _default = PubSub; // pubnub.addListener({
 //   message: (messageObject) => {
 //     console.log("messageObject", messageObject);
@@ -31808,7 +31812,7 @@ var _default = PubSub; // pubnub.addListener({
 // }, 1000)
 
 exports.default = _default;
-},{"pubnub":"../node_modules/pubnub/dist/web/pubnub.min.js","./pubnub.config":"pubnub.config.json"}],"../node_modules/uuid/dist/esm-browser/rng.js":[function(require,module,exports) {
+},{"pubnub":"../node_modules/pubnub/dist/web/pubnub.min.js","react":"../node_modules/react/index.js","./pubnub.config":"pubnub.config.json"}],"../node_modules/uuid/dist/esm-browser/rng.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32677,11 +32681,9 @@ exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _pubsub = _interopRequireDefault(require("../pubsub"));
+var _pubsub = require("../pubsub");
 
 var _messages = require("../actions/messages");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -32711,8 +32713,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var pubsub = new _pubsub.default();
-
 var PublishMessage = /*#__PURE__*/function (_Component) {
   _inherits(PublishMessage, _Component);
 
@@ -32740,7 +32740,11 @@ var PublishMessage = /*#__PURE__*/function (_Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "publishMessage", function () {
-      pubsub.publish((0, _messages.newMessage)(_this.state.text));
+      var text = _this.state.text;
+
+      _this.context.pubsub.publish((0, _messages.newMessage)({
+        text: text
+      }));
     });
 
     _defineProperty(_assertThisInitialized(_this), "handleKeyPress", function (event) {
@@ -32753,6 +32757,7 @@ var PublishMessage = /*#__PURE__*/function (_Component) {
   _createClass(PublishMessage, [{
     key: "render",
     value: function render() {
+      console.log(this, 'this');
       return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("h3", null, "Got something to say?"), /*#__PURE__*/_react.default.createElement("input", {
         onChange: this.updateText,
         onKeyPress: this.handleKeyPress
@@ -32764,6 +32769,8 @@ var PublishMessage = /*#__PURE__*/function (_Component) {
 
   return PublishMessage;
 }(_react.Component);
+
+_defineProperty(PublishMessage, "contextType", _pubsub.PubSubContext);
 
 var _default = PublishMessage;
 exports.default = _default;
@@ -32919,9 +32926,13 @@ var _App = _interopRequireDefault(require("./components/App"));
 
 require("./index.css");
 
-var _pubsub = _interopRequireDefault(require("./pubsub"));
+var _pubsub = _interopRequireWildcard(require("./pubsub"));
 
 var _messages = require("./actions/messages");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32945,7 +32956,11 @@ setTimeout(function () {
 
 _reactDom.default.render( /*#__PURE__*/_react.default.createElement(_reactRedux.Provider, {
   store: store
-}, /*#__PURE__*/_react.default.createElement(_App.default, null)), document.getElementById("root"));
+}, /*#__PURE__*/_react.default.createElement(_pubsub.PubSubContext.Provider, {
+  value: {
+    pubsub: pubsub
+  }
+}, /*#__PURE__*/_react.default.createElement(_App.default, null))), document.getElementById("root"));
 },{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","redux":"../node_modules/redux/es/redux.js","react-redux":"../node_modules/react-redux/es/index.js","./reducers":"reducers/index.js","./components/App":"components/App.js","./index.css":"index.css","./pubsub":"pubsub.js","./actions/messages":"actions/messages.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';

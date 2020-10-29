@@ -1,22 +1,22 @@
 import React, { Component } from "react";
-import PubSub from "../pubsub";
+import { PubSubContext } from "../pubsub";
 import { newMessage } from "../actions/messages";
-
-const pubsub = new PubSub();
 
 class PublishMessage extends Component {
   state = { text: "" };
   updateText = (event) => this.setState({ text: event.target.value });
 
   publishMessage = () => {
-    pubsub.publish(newMessage(this.state.text));
+    const { text } = this.state;
+    this.context.pubsub.publish(newMessage({ text }));
   };
-  
+
   handleKeyPress = (event) => {
     if (event.key == "Enter") this.publishMessage();
   };
 
   render() {
+      console.log(this, 'this')
     return (
       <div>
         <h3>Got something to say?</h3>
@@ -25,5 +25,7 @@ class PublishMessage extends Component {
       </div>
     );
   }
+  static contextType = PubSubContext;
 }
+
 export default PublishMessage;
