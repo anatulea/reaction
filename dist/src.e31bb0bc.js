@@ -32936,7 +32936,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var store = (0, _redux.createStore)(_reducers.default);
+var store = (0, _redux.createStore)(_reducers.default, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 console.log("store.getState()", store.getState());
 store.subscribe(function () {
   return console.log("store.getState()", store.getState());
@@ -32989,7 +32989,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60654" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63373" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

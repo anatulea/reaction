@@ -8,7 +8,7 @@ import "./index.css";
 import PubSub, { PubSubContext } from "./pubsub";
 import { newMessage } from "./actions/messages";
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer,  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 console.log("store.getState()", store.getState());
 store.subscribe(() => console.log("store.getState()", store.getState()));
